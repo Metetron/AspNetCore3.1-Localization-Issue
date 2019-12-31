@@ -1,0 +1,25 @@
+﻿@using Microsoft.AspNetCore.Builder
+@using Microsoft.AspNetCore.Mvc.Localization
+@using Microsoft.Extensions.Options
+
+@inject IViewLocalizer Localizer
+@inject IOptions<RequestLocalizationOptions> LocOptions
+
+@{
+    var cultureItems = LocOptions.Value.SupportedUICultures
+        .Select(c => new SelectListItem { Value = c.Name, Text = c.NativeName })
+        .ToList();
+    var returnUrl = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";
+}
+
+<li class="nav-item dropdown">
+    <a class="nav-link dropdown-toggle" href="#" id="languageDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        @Localizer["Language"]
+    </a>
+    <div class="dropdown-menu" aria-labelledby="languageDropdown">
+        @foreach (var language in @cultureItems)
+        {
+            <a class="dropdown-item" asp-controller="Home" asp-action="SetLanguage" asp-route-culture="@language.Value" asp-route-returnUrl="@returnUrl">@language.Text</a>
+        }
+    </div>
+</li>
